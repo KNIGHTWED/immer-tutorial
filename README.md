@@ -1,70 +1,42 @@
-# Getting Started with Create React App
+# immer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+>불변성에 신경 쓰지 않는 것처럼 코드를 작성하되 불변성 관리는 제대로 해 주는 것
 
-## Available Scripts
+concat, map, fliter 등 상태를 관리하는 함수들이 있지만
+불변성을 유지하는 코드가 복잡할 때는 immer의 push, splice를 사용하는 것을 권장.
+onRemove의 경우는 filter를 사용한 코드가 더 깔끔하기 때문에 굳이 immer의 splice를 사용하지 않아도 됨.
 
-In the project directory, you can run:
+useState의 함수형 업데이트를 활용하면 코드다 더 깔끔해진다.
 
-### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```javascript
+  // 함수형 업데이트 X
+  const onChange = useCallback(e => {
+    const { name, value } = e.target;
+    setForm(
+      produce(form, draft => {
+        draft[name] = value;
+      })
+    );
+  }, []);
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  // 함수형 업데이트 O
+  const onChange = useCallback(e => {
+    const { name, value } = e.target;
+    setForm(
+      produce(draft => {
+        draft[name] = value;
+      })
+    );
+  }, []);
+```
+다른점은 크게 없다...
 
-### `yarn test`
+produce 안에 form을 사용하지 않아서 지워주는 느낌..
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 정리
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+immer는 컴포넌트의 상태 업데이트가 까다로울때, 복잡할 때 사용하면 좋다.
+다만 immer는 편의를 위한 라이브러리일뿐 필수 라이브러리는 아니다.
+편의성이 높아지면 생산성을 높일 수 있기 때문에 사용한다.
+immer를 사용하는 것이 더 불편하다면 사용하지 않아도 된다.
